@@ -1,0 +1,6 @@
+{
+	"name": "hello-tracer",
+	"enable": true,
+	"sampler": 1.0,
+	"endpoint": "jaeger:6831"
+}

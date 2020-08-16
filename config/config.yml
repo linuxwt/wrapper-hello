@@ -1,0 +1,137 @@
+# 包装器配置
+wrapper:
+# 工作模式，默认为 "proxy" 代理模式
+# "launcher"  启动器模式，负责为单体应用程序向注册中心注册及注销，并通过脚本控制单体应用执行
+# "proxy" 模式为代理模式，包含启动器功能，并启动 HTTP 服务对外提供服务，转发请求至单体应用，可对请求进行日志分析处理
+# mode: "proxy"
+
+# HTTP 代理服务主机名, 默认为 "0.0.0.0", 即全部接收
+# 该配置项应用于对 wrapper 代理模式下的 HTTP 服务的主机名。对应 http://{hostname}:{port}
+# hostname: "0.0.0.0"
+
+# HTTP 代理服务端口，默认 58080
+# port: 58080
+
+# HTTP 代理服务请求重试次数，默认值 3
+# 转发请求到单体应用时，如果发起请求失败，将进行重试。超过重试次数仍然失败将重新启动单体应用
+# request_retry: 3
+
+# 是否根据单体应用 API 进行过滤，默认为否，即透明模式
+# 如果为 true 将根据 API MAP 进行过滤，限制对未提供的 API 进行访问，当前版本采用透明模式不过滤，只支持 false
+# 过滤 API 需向请求者返回失败信息，如 405 method not allowed，具体返回格式需确认。
+# filter_api: false
+# 待过滤的 API URL 信息，具体过滤内容需要与单体应用确认
+# api:
+# data: "/data"
+
+# 单体应用监控 url , 用于确认单体应用运行是否正常，当前版本支持 GET 方法，根据 HTTP 状态 200 进行确认。如果状态不正确，将重新启动单体应用。
+# http://{monolith_ip}:{port}/{check_url}
+    check_url: "http://127.0.0.1:8080/data"
+
+# 监控 URL 检查间隔, 默认 5 秒
+# check_interval: 5
+
+# 重启间隔，默认 5 秒
+# HTTP 转发支持并发访问，可能同时由多个线程触发重启操作，需限制重启间隔，如单体应用已经重启，且不能提供服务，将返回 503 Service Unavailable 错误。
+# restart_interval: 5
+
+# 单体应用控制脚本，默认为 "./launcher.sh"
+# script_path: "./launcher.sh"
+
+# monolith 配置
+# monolith:
+# 单体应用接收转发请求的 IP , 默认为 "127.0.0.1"。
+# 该配置项应用于接收  wrapper 代理服务器转发的单体应用主机名。对应 http://{IP}:{port}。
+# 采用 "127.0.0.1" 避免其它微服务通过内部 overlay 网络直接访问单体应用。
+# 如果 wrapper 不是代理模式，可以设置为 0.0.0.0
+# ip: "127.0.0.1"
+
+# 单体应用接收转发请求端口，默认 8080
+# port: 8080
+
+# center 配置
+center:
+    # 注册中心主机名, 默认为 "nacos"。
+    hostname: "nacos"
+
+    # 注册中心端口，默认 8848
+    # port: 8848
+
+# service 配置
+service:
+    # 命名空间 id, 需要手工在 nacos 中进行创建
+    namespace_id: "43a700c7-0316-4133-913e-810b520c47e4"
+
+    # 服务名，需要注册的服务名
+    service_name: "wrapper-hello"
+
+    # 元数据
+    metadata:
+        service_type: "TYPE"
+        company_name: "NAME"
+
+    # 查询服务名
+    query_name: ["wrapper-hello"]
+
+    # 集群名，默认值 "DEFAULT"
+    # cluster_name: "DEFAULT"
+
+    # 组名，默认值 "DEFAULT_GROUP"
+    # group_name: "DEFAULT_GROUP"
+
+    # 用户名，默认值 "nacos"
+    # username
+
+    # 密码，默认值 "nacos"
+    # password
+
+    # 网卡名，默认值 "eth0"
+    ethernet_name: "eth2"
+
+# prometheus 配置
+# prometheus:
+# 是否启用 prometheus, 默认值 true
+# enable: true
+
+# jaeger 配置
+jaeger:
+    # 是否启用 tracing，默认值 true
+    # enable: true
+
+    # tracer 名称，默认值 "jaeger-service"
+    name: "wrapper-hello-tracer"
+
+    # 采样率，默认值 0.1
+    sampler: 1
+    # 服务端点，默认值 ":6831"
+    endpoint: "jaeger:6831"
+# Pool 设置，Job-Worker 线程池
+# pool:
+# 调度器名称 默认值，"task"
+# dispatcher_name: "task"
+
+# 队列长度，默认值 200
+# queue_capacity: 200
+
+# 作业容量，默认值 50
+# job_capacity: 50
+
+# 工作者容量，默认值 20
+# worker_capacity: 20
+
+# breaker 设置
+# breaker:
+# 阈值，默认值 20，
+# 20 次错误后，breaker 为 open 状态
+# threshold: 20
+
+# 刷新周期，默认值 10000 毫秒
+# tick: 10000
+
+# timing wheel 时间轮设置
+# timing_wheel:
+# 时间轮单圈容量，默认值 60
+# capacity: 60
+
+# 最短间隔周期，默认值 100 毫秒
+# tick: 100
